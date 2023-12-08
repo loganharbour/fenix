@@ -21,11 +21,16 @@ public:
 
   static InputParameters validParams();
 
-  virtual void generateRays() override;
-  // The banked rays to be used on the next timestep (restartable)
-  std::vector<std::shared_ptr<Ray>> & _banked_rays;
+  virtual void generateRays() override final;
 
 protected:
+  /**
+   * Initializes the particles
+   *
+   * Must be overridden in derived classes
+  */
+  virtual void initializeParticles() = 0;
+
   virtual void postExecuteStudy() override;
   /// Ray data for storing velocity components
   ///@{
@@ -36,13 +41,6 @@ protected:
   /** Ray data fro storing the number of real particles each ray represents */
   const RayDataIndex _weight_index;
 
-  /// Whether or not we've generated rays yet (restartable)
-  bool & _has_generated;
-
-  /// the velocity updater object which we will hold the rules for how our
-  /// particles velocities are updated
-  const VelocityUpdaterBase & _velocity_updater;
-
   /**
    * Method for getting a rays velocity as a vector
    * Each component is retrieved from ray data and given
@@ -50,4 +48,15 @@ protected:
    * @param ray the ray
    */
   Point getVelocity(const Ray & ray) const;
+
+private:
+  // The banked rays to be used on the next timestep (restartable)
+  std::vector<std::shared_ptr<Ray>> & _banked_rays;
+
+  /// Whether or not we've generated rays yet (restartable)
+  bool & _has_generated;
+
+  /// the velocity updater object which we will hold the rules for how our
+  /// particles velocities are updated
+  const VelocityUpdaterBase & _velocity_updater;
 };

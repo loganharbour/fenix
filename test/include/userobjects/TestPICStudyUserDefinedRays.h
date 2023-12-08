@@ -23,7 +23,7 @@ public:
 
   static InputParameters validParams();
 
-  virtual void generateRays() override;
+  virtual void initializeParticles() override final;
 
 private:
   // The starting points
